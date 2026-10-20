@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    「出怪倍率」Mod —— 托管运行时程序集。
+
+    刻意不用 Godot.NET.Sdk（要联网还原包 + 源码生成器）；本入口只用
+    Godot 普通 API（Control / Label / Button / HSlider / OptionButton / CanvasLayer）
+    与游戏程序集的公开成员（TowerDefenseBattleFeatureWave / TowerDefenseProgressManager /
+    GeneralProgressMeter …）。
+
+    入口程序集**身份名**用唯一名 JTYSpawnRate，避免与其他 Mod 的 "ModAssembly" 撞车；
+    打包环节会改名为 ModAssembly.dll 放进包内 Runtime/（mod.json 的 runtimeAssembly 是
+    硬编码字面量，文件名不可变，改的只是"身份"）。
+    ⚠️ 安卓要求程序集名全局唯一 ⇒ 不要改成 ModAssembly / JTYTimeStop 之类已有名字。
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>JTYSpawnRate</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Deterministic>true</Deterministic>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <!-- 游戏程序集是 net9.0；压掉 MSB3277 版本冲突警告（否则构建日志膨胀、耗时变长） -->
+    <NoWarn>$(NoWarn);MSB3277</NoWarn>
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+    <!-- 由构建脚本传 -p:GodotRefDir=... 覆盖（值来自 mods/_modenv.py） -->
+    <GodotRefDir Condition="'$(GodotRefDir)' == ''"></GodotRefDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 共享组件：战斗设置页多列 + 通用面板/配置工具（多 Mod 约定，别改这两份文件） -->
+    <Compile Include="..\..\BattleOptionColumns.cs" Link="BattleOptionColumns.cs" />
+    <Compile Include="..\..\BattlePanelKit.cs" Link="BattlePanelKit.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Private=false：26MB 的游戏程序集不进输出，运行时由引擎自己那份解析 -->
+    <Reference Include="GodotSharp">
+      <HintPath>$(GodotRefDir)\GodotSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="PlantsVsZombies">
+      <HintPath>$(GodotRefDir)\PlantsVsZombies.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

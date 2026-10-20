@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 2,
+  "id": "spawnrate",
+  "name": "出怪倍率",
+  "version": "1.0.0",
+  "author": "apples1949",
+  "description": "在「选项 → 战斗设置」里加一个「出怪倍率 · 设置」按钮（与其他 Mod 的列并排，互不覆盖），点开面板即可修改当前关卡的出怪倍率：先在下拉栏选「大于 1 倍 / 等于 1 倍 / 小于 1 倍」，再拖动滑动条（0.1~1 倍共 10 档、1~10 倍共 10 档），点「确定」立即对当前关卡生效。",
+  "playInstructions": "1. 进入关卡 → 选项 → 战斗设置（设置植物僵尸血条那一页）。\n2. 点右侧列的「出怪倍率 · 设置」打开面板。\n3. 下拉选「大于 1 倍 / 等于 1 倍 / 小于 1 倍」，拖动滑动条选具体倍率。\n4. 点「确定」→ 当前关卡后续每一波的僵尸数量按倍率放大/缩小（已在场的波次不变）。\n5. 选「等于 1 倍」并确定 = 恢复原样。倍率只对当前关卡生效；换关自动恢复。",
+  "dependencies": [],
+  "conflicts": [],
+  "provides": {},
+  "overrides": {},
+  "scripts": [],
+  "settings": [
+    {
+      "key": "multKind",
+      "type": "enum",
+      "label": "倍率方向",
+      "group": "出怪倍率",
+      "description": "大于 1 倍 = 出怪变多；小于 1 倍 = 出怪变少；等于 1 倍 = 恢复原样。改完在面板里点「确定」才生效。",
+      "applyMode": "immediate",
+      "affectsGameplay": false,
+      "default": "gt",
+      "options": [
+        {
+          "value": "gt",
+          "label": "大于 1 倍"
+        },
+        {
+          "value": "lt",
+          "label": "小于 1 倍"
+        },
+        {
+          "value": "eq",
+          "label": "等于 1 倍"
+        }
+      ]
+    },
+    {
+      "key": "multIndex",
+      "type": "int",
+      "label": "倍率档位",
+      "group": "出怪倍率",
+      "default": 3,
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "description": "滑动条的 10 个档位（1~10）。大于 1 倍时 = 1×~10×；小于 1 倍时 = 0.1×~1.0×。",
+      "applyMode": "immediate",
+      "affectsGameplay": false
+    },
+    {
+      "key": "enableLog",
+      "type": "bool",
+      "label": "输出诊断日志",
+      "group": "诊断",
+      "description": "排查问题时打开，会把运行状态写进 godot.log。平时关掉，不刷日志。",
+      "applyMode": "immediate",
+      "affectsGameplay": false,
+      "default": false
+    },
+    {
+      "key": "aboutChangelog",
+      "type": "text",
+      "label": "更新内容",
+      "group": "关于",
+      "content": "v1.0.0 · 2026-10-20\n新增：战斗设置页「出怪倍率 · 设置」按钮（与其他 Mod 的列并排，互不覆盖）。\n新增：面板下拉选择 大于 1 倍 / 等于 1 倍 / 小于 1 倍，滑动条 10 档（0.1~1.0 倍 / 1~10 倍），点「确定」对当前关卡生效。\n说明：按波次总量等比例放大/缩小，僵尸种类比例保持不变；动态出怪（波次点数）也按同倍率缩放；已生成的波次不受影响。"
+    },
+    {
+      "key": "aboutAuthor",
+      "type": "richtext",
+      "label": "作者与链接",
+      "group": "关于",
+      "content": "出怪倍率 v1.0.0 · 作者：apples1949\n\n[url=https://space.bilibili.com/186773722]B 站空间[/url]\n[url=https://apples1949.lanzouc.com/b007uuknqd]蓝奏云下载（密码 762b）[/url]\n\n本模组为玩家自制 Mod，与《植物大战僵尸杂交重制版》官方无隶属关系。"
+    }
+  ],
+  "runtimeAssembly": "Runtime/ModAssembly.dll",
+  "runtimeEntryType": "SpawnRateEntry",
+  "runtimeApiVersion": 3,
+  "runtimeAssemblyPolicy": "optional",
+  "blueprints": [],
+  "translations": [],
+  "resources": [
+    "Runtime/ModAssembly.dll"
+  ]
+}
