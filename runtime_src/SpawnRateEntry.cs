@@ -137,7 +137,7 @@ public sealed partial class SpawnRateEntry : IXWModRuntimeEntry
 			// ★ 不受 enableLog 门控：每次启动只打 1 行，用来确认"包真的加载且入口跑起来了"。
 			try
 			{
-				GD.Print("[SpawnRate] v1.0.0 ready（出怪倍率面板；enableLog="
+				GD.Print("[SpawnRate] v1.0.1 ready（出怪倍率面板；enableLog="
 					+ (BattlePanelKit.LogEnabled ? "on" : "off") + "）");
 			}
 			catch { }
@@ -234,10 +234,39 @@ public sealed partial class SpawnRateEntry : IXWModRuntimeEntry
 			BattlePanelKit.CollectOptionDialogs(_tree, opts);
 			for (int i = 0; i < opts.Count; i++)
 			{
-				// 2026-10-20 实机反馈：新建列会被挤出 1080 宽视口（截图里按钮贴在右上角被裁）
-				// ⇒ 放进原生列底部共用工具行，多 Mod 并排、不增宽。
-				BattlePanelKit.EnsureToolbarButton(opts[i], OptBtnName,
-					"出怪倍率", "修改当前关卡的出怪倍率（大于 / 小于 / 等于 1 倍，10 档滑动条）", OpenPanel);
+				Node opt = opts[i];
+				if (opt == null || !GodotObject.IsInstanceValid(opt)) { continue; }
+				// ★ 2026-10-24 用户要求：与「时停·卡槽触发面板 / CD开关设置面板 / 改键面板 / 波次栏位置」
+				//   **竖排在同一列**（`ModCol4`）。该列已存在 ⇒ 只加按钮，不新增列宽。
+				VBoxContainer col = BattleOptionColumns.GetOrCreateColumn(opt,
+					BattleOptionColumns.TimeStopColName, BattleOptionColumns.TimeStopColMinWidth);
+				if (col == null || !GodotObject.IsInstanceValid(col)) { continue; }
+				if (col.FindChild(OptBtnName, true, false) != null) { continue; }   // 幂等
+
+				// 旧版留在原生列工具行里的同名按钮先清掉，避免两个入口
+				Button stale = opt.FindChild(OptBtnName, true, false) as Button;
+				if (stale != null && GodotObject.IsInstanceValid(stale))
+				{
+					try { stale.GetParent()?.RemoveChild(stale); } catch { }
+					try { stale.QueueFree(); } catch { }
+				}
+
+				Button b = new Button();
+				b.Name = OptBtnName;
+				b.Text = "出怪倍率";
+				b.TooltipText = "修改当前关卡的出怪倍率（大于 / 小于 / 等于 1 倍，10 档滑动条）";
+				b.AddThemeFontSizeOverride("font_size", 14);
+				b.CustomMinimumSize = new Vector2(0f, 40f);
+				b.ProcessMode = Node.ProcessModeEnum.Always;
+				BattleOptionColumns.ApplyDarkButtonStyle(b);
+				b.Pressed += () =>
+				{
+					try { OpenPanel(); }
+					catch (Exception exOpen) { SafeWarn("打开出怪倍率面板异常（已吞）：" + exOpen.Message); }
+				};
+				col.AddChild(b, false, Node.InternalMode.Disabled);
+				try { BattleOptionColumns.NormalizeOrder(opt); } catch { }
+				BattlePanelKit.Info("已在战斗设置页 ModCol4 列注入按钮：出怪倍率");
 			}
 		}
 		catch (Exception ex)
