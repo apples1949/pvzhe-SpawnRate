@@ -137,7 +137,7 @@ public sealed partial class SpawnRateEntry : IXWModRuntimeEntry
 			// ★ 不受 enableLog 门控：每次启动只打 1 行，用来确认"包真的加载且入口跑起来了"。
 			try
 			{
-				GD.Print("[SpawnRate] v1.0.1 ready（出怪倍率面板；enableLog="
+				GD.Print("[SpawnRate] v1.0.2 ready（出怪倍率面板；enableLog="
 					+ (BattlePanelKit.LogEnabled ? "on" : "off") + "）");
 			}
 			catch { }
@@ -205,6 +205,11 @@ public sealed partial class SpawnRateEntry : IXWModRuntimeEntry
 
 	private void OnFrame()
 	{
+		// ★ v1.0.2：配置页「关于」栏收款码（共享组件 SponsorQrInjector.cs；内部 30 帧节流 +
+		//   插好后停止全树查找）。modName 必须与 mod.json 的 name 逐字一致 —— 注入器靠
+		//   「该富文本是否以本 Mod 名开头」判定归属，不匹配就一个字都不会插。
+		try { SponsorQrInjector.Tick(Engine.GetMainLoop() as SceneTree, "出怪倍率", _context?.PackageRoot ?? "", "Resources/SponsorQR.png"); } catch { }
+
 		try
 		{
 			_frame++;
